@@ -61,8 +61,6 @@ module Brahe
       settings.sat_cache.update
 
       ids = params[:ids].split(',')
-      count = params[:count] || 5
-
       coords = params[:from].split(',').map(&:to_f)
       coords[2] = 0 unless coords[2]
       site = Orbit::Site.new(*coords)
