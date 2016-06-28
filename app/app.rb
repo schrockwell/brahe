@@ -38,8 +38,8 @@ module Brahe
 
         sat_result[:id] = id
         sat_result[:name] = sat.tle.tle_string.split("\n").first
-        sat_result[:position] = SatelliteCalcs.position_to_hash(sat.current_position)
-        sat_result[:footprint_km] = calc.footprint_radius.round
+        sat_result.merge!(SatelliteCalcs.position_to_hash(sat.current_position))
+        sat_result[:radius_km] = calc.footprint_radius.round
         sat_result[:path] = calc.path.map { |p| [p[:lat], p[:lng]] } if include_paths
 
         if site
