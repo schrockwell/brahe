@@ -19,15 +19,11 @@ The page is live at `http://localhost:9292/`
 
 ### `/current`
 
-#### Query Params
-
-* `from=lat,lng,alt_m` – optional; specify observation location to get current look angles (altitude optional, assumed zero unless specified)
-* `ids=07530,25544` – optional; only include certain sats
-* `paths=1` – optional; include ground track ± 30 minutes
+* `from=lat,lng,alt_m` – optional; specify observation location to get current look angles (altitude optional, assumed zero if omitted)
+* `ids=sat_id_1,sat_id_2,…` – optional; only include certain sats (all sats returned if omitted)
+* `paths=1` – optional; include ground tracks for each satellite (± 30 minutes)
 
 ### `/passes`
 
-#### Query Params
-
-* `from=lat,lng,alt_m` – **required**; specify observation location to get current look angles (altitude optional, assumed zero unless specified)
-* `ids=07530,25544` – **required**; specify sats to see passes for
+* `from=lat,lng,alt_m` – **required**; observation location (altitude optional, assumed zero unless specified)
+* `ids=sat_id_1,sat_id_2,…` – **required**; specify sats
