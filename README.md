@@ -4,7 +4,7 @@
 
 ## Installation
 
-Using RVM.
+Using RVM and Ruby 2.3.x:
 
 ```
 cd brahe
