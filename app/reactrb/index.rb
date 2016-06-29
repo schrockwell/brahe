@@ -26,6 +26,8 @@ Document.ready? do
     ),
     Element['#passes-table']
   )
+
+  React.render(React.create_element(UTCClock), Element['#utc-clock'])
 end
 
 class SatelliteTable < React::Component::Base
@@ -93,18 +95,41 @@ class PassesTable < React::Component::Base
     @updater.stop
   end
 
+  def interval_format(seconds)
+    past = (seconds < 0)
+
+    seconds = seconds.to_i.abs
+
+    hours = (seconds / 60 / 60).to_i
+    seconds -= hours * 60 * 60
+
+    minutes = (seconds / 60).to_i
+    seconds -= minutes * 60
+
+    str = ''
+
+    if hours > 0
+      str += "#{'%0d' % hours}h #{'%0d' % minutes}m #{'%02d' % seconds}s"
+    elsif minutes > 0
+      str += "#{'%0d' % minutes}m #{'%02d' % seconds}s"
+    else
+      str += "#{'%02d' % seconds}s"
+    end
+
+    str += ' ago' if past
+    str
+  end
+
   def render
     table(:class => 'table table-hover') do
       thead do
         tr do
           th { 'Sat' }
+          th { 'Duration' }
+          th { 'Max El' }
           th { 'AOS' }
           th { 'Max' }
-          th { 'LOS'}
-          th { 'AOS Az'}
-          th { 'Max Az' }
-          th { 'Maz El' }
-          th { 'LOS Az' }
+          th { 'LOS' }
         end
       end
 
@@ -124,13 +149,11 @@ class PassesTable < React::Component::Base
 
           tr(:class => tr_class) do
             td { pass['sat_id'] }
-            td { Time.at(pass['aos']['time']).utc.to_s }
-            td { Time.at(pass['max']['time']).utc.to_s }
-            td { Time.at(pass['los']['time']).utc.to_s }
-            td { pass['aos']['az'].to_s }
-            td { pass['max']['az'].to_s }
-            td { pass['max']['el'].to_s }
-            td { pass['los']['az'].to_s }
+            td { interval_format(pass['los']['time'] - pass['aos']['time']) }
+            td { "#{pass['max']['el'].to_s}°" }
+            td { "#{Time.at(pass['aos']['time']).utc.to_s} @ #{pass['aos']['az']}° (#{interval_format(pass['aos']['time'] - Time.now.to_i)})" }
+            td { "#{Time.at(pass['max']['time']).utc.to_s} @ #{pass['max']['az']}° (#{interval_format(pass['max']['time'] - Time.now.to_i)})" }
+            td { "#{Time.at(pass['los']['time']).utc.to_s} @ #{pass['los']['az']}° (#{interval_format(pass['los']['time'] - Time.now.to_i)})" }
           end
         end
       end
@@ -223,5 +246,28 @@ class UpdatingPassesTable < React::Component::Base
 
   def render
     PassesTable(:passes => state.passes)
+  end
+end
+
+class UTCClock < React::Component::Base
+  define_state :now => Time.now
+
+  before_mount do
+    @updater = every(1) do
+      state.now! Time.now
+    end
+  end
+
+  after_mount do
+    @updater.start
+    @updater.call
+  end
+
+  before_unmount do
+    @updater.stop
+  end
+
+  def render
+    state.now.utc.to_s
   end
 end
