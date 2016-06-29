@@ -51,9 +51,9 @@ class SatelliteTable < React::Component::Base
         params.sats.each do |sat|
           look = sat['look']
 
-          if look && look['el'] > 0
+          if look && look['el'] > 5
             tr_class = 'success'
-          elsif look && look['el'] > -5
+          elsif look && look['el'] > 0
             tr_class = 'warning'
           else
             tr_class = nil
@@ -117,7 +117,7 @@ class PassesTable < React::Component::Base
           if pass['aos']['time'] <= state.now.to_i && pass['los']['time'] >= state.now.to_i 
             tr_class = 'success'
           elsif pass['los']['time'] < state.now.to_i  
-            tr_class = 'text_muted'
+            tr_class = 'text-muted'
           else
             tr_class = nil
           end
