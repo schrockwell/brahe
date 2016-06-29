@@ -33,7 +33,7 @@ class SatelliteCalcs
   def next_passes(options={})
     min_el = options[:min_el] || 5
     start_time = options[:start_time] || Time.now
-    end_time = options[:end_time] || start_time + (72 * 60 * 60)
+    end_time = options[:end_time] || start_time + (24 * 60 * 60)
 
     passes = []
     time = start_time
@@ -45,7 +45,6 @@ class SatelliteCalcs
       time += search_interval
       look = site.view_angle_to_satellite_at_time(sat, time)
       if look.elevation > 0 && current_pass == nil
-        puts "Found a new pass at #{time}"
         current_pass = {
           :max => { :el => 0 }
         }
@@ -56,7 +55,6 @@ class SatelliteCalcs
           look = site.view_angle_to_satellite_at_time(sat, time)
         end
 
-        puts "AOS: #{time}"
         aos_time = time
 
         # Search forwards for LOS
@@ -65,7 +63,6 @@ class SatelliteCalcs
           look = site.view_angle_to_satellite_at_time(sat, time)
         end while look.elevation >= 0
 
-        puts "LOS: #{time}"
         los_time = time
 
         # Calculate the peak (halfway between AOS and LOS)
@@ -75,6 +72,7 @@ class SatelliteCalcs
         current_pass[:max] = look_to_hash(max_time)
         current_pass[:los] = look_to_hash(los_time)
         current_pass[:sat_id] = sat.tle.norad_num
+        current_pass[:id] = "#{aos_time.to_i}-#{sat.tle.norad_num}"
 
         if current_pass[:max][:el] >= min_el
           passes << current_pass 

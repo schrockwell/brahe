@@ -49,6 +49,7 @@ get '/current' do
     end
   end
 
+  results[:satellites].sort! { |s1, s2| s1[:name] <=> s2[:name] }
   content_type :json
   results.to_json
 end
