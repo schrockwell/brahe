@@ -37,7 +37,7 @@ class SatelliteCalcs
 
     passes = []
     search_interval = 60
-    calc_interval = 5
+    calc_interval = 1
     time = start_time - search_interval
     current_pass = nil
 

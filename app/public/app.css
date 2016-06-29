@@ -1,0 +1,19 @@
+td.border-left,
+th.border-left {
+  border-left: 1px solid #ccc;
+}
+
+td.border-right,
+th.border-right {
+  border-right: 1px solid #ccc;
+}
+
+th.num, td.num,
+th.time, td.time,
+th.interval, td.interval {
+  text-align: right;
+}
+
+th.center, td.center {
+  text-align: center;
+}

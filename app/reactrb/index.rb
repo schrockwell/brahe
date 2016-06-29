@@ -38,8 +38,6 @@ class SatelliteTable < React::Component::Base
       thead do
         tr do
           th { 'Name' }
-          th { 'Lat' }
-          th { 'Long' }
           th { 'Az' }
           th { 'El' }
           th { 'Alt (km)' }
@@ -63,8 +61,6 @@ class SatelliteTable < React::Component::Base
 
           tr :key => sat['id'], :class => tr_class do
             td { sat['name'] }
-            td { '%02.6f' % sat['lat'] }
-            td { '%03.6f' % sat['lng'] }
             td { look['az'].to_s if look != nil }
             td { look['el'].to_s if look != nil }
             td { sat['alt_km'].to_s }
@@ -120,17 +116,22 @@ class PassesTable < React::Component::Base
     str
   end
 
+  def utc_epoch_time_format(epoch)
+    Time.at(epoch).utc.strftime('%b %-e %H:%M:%S UTC')
+  end
+
   def render
     table(:class => 'table table-hover') do
       thead do
         tr do
           th { 'Sat' }
-          th { 'Duration' }
-          th { 'Max El' }
-          th { 'AOS' }
-          th { 'Max' }
-          th { 'LOS' }
+          th(:class => 'interval') { 'Duration' }
+          th(:class => 'num') { 'Max El' }
+          th(:class => 'border-left border-right center', :col_span => 3) { 'AOS' }
+          th(:class => 'border-left border-right center', :col_span => 3) { 'Max' }
+          th(:class => 'border-left border-right center', :col_span => 3) { 'LOS' }
         end
+        
       end
 
       tbody do
@@ -149,11 +150,20 @@ class PassesTable < React::Component::Base
 
           tr(:class => tr_class) do
             td { pass['sat_id'] }
-            td { interval_format(pass['los']['time'] - pass['aos']['time']) }
-            td { "#{pass['max']['el'].to_s}°" }
-            td { "#{Time.at(pass['aos']['time']).utc.to_s} @ #{pass['aos']['az']}° (#{interval_format(pass['aos']['time'] - Time.now.to_i)})" }
-            td { "#{Time.at(pass['max']['time']).utc.to_s} @ #{pass['max']['az']}° (#{interval_format(pass['max']['time'] - Time.now.to_i)})" }
-            td { "#{Time.at(pass['los']['time']).utc.to_s} @ #{pass['los']['az']}° (#{interval_format(pass['los']['time'] - Time.now.to_i)})" }
+            td(:class => 'interval') { interval_format(pass['los']['time'] - pass['aos']['time']) }
+            td(:class => 'num') { "#{pass['max']['el'].to_s}°" }
+
+            td(:class => 'interval border-left') { interval_format(pass['aos']['time'] - Time.now.to_i) }
+            td(:class => 'time') { utc_epoch_time_format(pass['aos']['time']) }
+            td(:class => 'num border-right') { "#{pass['aos']['az']}°" }
+
+            td(:class => 'interval border-left') { interval_format(pass['max']['time'] - Time.now.to_i) }
+            td(:class => 'time') { utc_epoch_time_format(pass['max']['time']) }
+            td(:class => 'num border-right') { "#{pass['max']['az']}°" }
+
+            td(:class => 'interval border-left') { interval_format(pass['los']['time'] - Time.now.to_i) }
+            td(:class => 'time') { utc_epoch_time_format(pass['los']['time']) }
+            td(:class => 'num border-right') { "#{pass['los']['az']}°" }
           end
         end
       end
@@ -216,6 +226,7 @@ class UpdatingPassesTable < React::Component::Base
   param :coords, :type => [Float]
 
   define_state :passes => []
+  define_state :now => Time.now
 
   before_mount do
     @fetcher = every(params.poll_interval) do
@@ -229,6 +240,12 @@ class UpdatingPassesTable < React::Component::Base
     end
   end
 
+  before_mount do
+    @updater = every(60) do
+      state.now! Time.now
+    end
+  end
+
   def poll_url
     url = "/passes?ids=#{params.sat_ids.join(',')}"
     url += "&from=#{params.coords.join(',')}"
@@ -238,14 +255,23 @@ class UpdatingPassesTable < React::Component::Base
   after_mount do
     @fetcher.start
     @fetcher.call # Immediately fetch
+
+    @updater.start
   end
   
   before_unmount do
     @fetcher.stop
+    @updater.stop
+  end
+
+  def upcoming_passes
+    # Don't display passes older than 5 minutes
+    min_time = state.now.to_i - (5 * 60)
+    state.passes.select { |p| p['los']['time'] > min_time }
   end
 
   def render
-    PassesTable(:passes => state.passes)
+    PassesTable(:passes => upcoming_passes)
   end
 end
 
