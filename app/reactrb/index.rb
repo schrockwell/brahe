@@ -1,6 +1,5 @@
 require 'opal'
 require 'browser/interval'
-require 'jquery'
 require 'opal-jquery'
 require 'opal-activesupport'
 require 'json'
