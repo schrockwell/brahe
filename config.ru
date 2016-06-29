@@ -2,9 +2,8 @@ require_relative 'app/init'
 
 Opal::Processor.source_map_enabled = true
 
-$opal = Opal::Server.new {|s|
-  s.append_path './app'
-  s.main = 'opal'
+$opal = Opal::Server.new { |s|
+  s.append_path './app/reactrb'
   s.debug = true
 }
 
