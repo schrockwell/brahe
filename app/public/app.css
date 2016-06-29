@@ -17,3 +17,7 @@ th.interval, td.interval {
 th.center, td.center {
   text-align: center;
 }
+
+th.az, td.az {
+  text-align: left;
+}

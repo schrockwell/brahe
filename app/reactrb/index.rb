@@ -6,6 +6,7 @@ require 'json'
 require 'react'
 require 'react-dom'
 require 'reactrb'
+require 'helpers'
 
 Document.ready? do
   React.render(                                            
@@ -34,7 +35,7 @@ class SatelliteTable < React::Component::Base
   param :sats, :type => [Hash], :default => []
 
   def render
-    table :class => 'table' do
+    table :class => 'table table-hover' do
       thead do
         tr do
           th { 'Name' }
@@ -72,6 +73,8 @@ class SatelliteTable < React::Component::Base
 end
 
 class PassesTable < React::Component::Base
+  include BraheHelpers
+
   param :passes, :type => [Hash], :default => []
 
   define_state :now => Time.now
@@ -89,35 +92,6 @@ class PassesTable < React::Component::Base
 
   before_unmount do
     @updater.stop
-  end
-
-  def interval_format(seconds)
-    past = (seconds < 0)
-
-    seconds = seconds.to_i.abs
-
-    hours = (seconds / 60 / 60).to_i
-    seconds -= hours * 60 * 60
-
-    minutes = (seconds / 60).to_i
-    seconds -= minutes * 60
-
-    str = ''
-
-    if hours > 0
-      str += "#{'%0d' % hours}h #{'%0d' % minutes}m #{'%02d' % seconds}s"
-    elsif minutes > 0
-      str += "#{'%0d' % minutes}m #{'%02d' % seconds}s"
-    else
-      str += "#{'%0d' % seconds}s"
-    end
-
-    str += ' ago' if past
-    str
-  end
-
-  def utc_epoch_time_format(epoch)
-    Time.at(epoch).utc.strftime('%b %-e %H:%M:%S UTC')
   end
 
   def render
@@ -154,16 +128,16 @@ class PassesTable < React::Component::Base
             td(:class => 'num') { "#{pass['max']['el'].to_s}°" }
 
             td(:class => 'interval border-left') { interval_format(pass['aos']['time'] - Time.now.to_i) }
-            td(:class => 'time') { utc_epoch_time_format(pass['aos']['time']) }
-            td(:class => 'num border-right') { "#{pass['aos']['az']}°" }
+            td(:class => 'center') { utc_epoch_time_format(pass['aos']['time']) }
+            td(:class => 'az border-right') { az_format(pass['aos']['az']) }
 
             td(:class => 'interval border-left') { interval_format(pass['max']['time'] - Time.now.to_i) }
-            td(:class => 'time') { utc_epoch_time_format(pass['max']['time']) }
-            td(:class => 'num border-right') { "#{pass['max']['az']}°" }
+            td(:class => 'center') { utc_epoch_time_format(pass['max']['time']) }
+            td(:class => 'az border-right') { az_format(pass['max']['az']) }
 
             td(:class => 'interval border-left') { interval_format(pass['los']['time'] - Time.now.to_i) }
-            td(:class => 'time') { utc_epoch_time_format(pass['los']['time']) }
-            td(:class => 'num border-right') { "#{pass['los']['az']}°" }
+            td(:class => 'center') { utc_epoch_time_format(pass['los']['time']) }
+            td(:class => 'az border-right') { az_format(pass['los']['az']) }
           end
         end
       end
