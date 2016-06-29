@@ -36,9 +36,9 @@ class SatelliteCalcs
     end_time = options[:end_time] || start_time + (24 * 60 * 60)
 
     passes = []
-    time = start_time
     search_interval = 60
     calc_interval = 5
+    time = start_time - search_interval
     current_pass = nil
 
     while time <= end_time do

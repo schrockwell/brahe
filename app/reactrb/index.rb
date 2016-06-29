@@ -113,7 +113,7 @@ class PassesTable < React::Component::Base
     elsif minutes > 0
       str += "#{'%0d' % minutes}m #{'%02d' % seconds}s"
     else
-      str += "#{'%02d' % seconds}s"
+      str += "#{'%0d' % seconds}s"
     end
 
     str += ' ago' if past
