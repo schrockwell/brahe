@@ -39,6 +39,7 @@ class SatelliteTable
     
   after_mount do
     @fetcher.start
+    @fetcher.call # Immediately fetch
   end
   
   before_unmount do
@@ -56,6 +57,10 @@ class SatelliteTable
         end
       end
       tbody do
+        if state.sats.count == 0
+          tr { td(:colspan => 6) { 'Loading...' } }
+        end
+
         state.sats.each do |sat|
           tr :key => sat['id'] do
             td { sat['name'] }
