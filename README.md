@@ -2,6 +2,8 @@
 
 …get me my potatofeng!
 
+This Sinatra app downloads [the latest AMSAT two-line Keplerian Elements](http://www.amsat.org/amsat/ftp/keps/current/nasabare.txt), passing them to the [orbit](https://github.com/jeffmcfadden/orbit) gem for calculation. The results are displayed via [Reactrb](http://reactrb.org/) components.
+
 ## Installation
 
 Using RVM and Ruby 2.3.x:
