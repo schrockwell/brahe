@@ -72,10 +72,11 @@ class SatelliteCalcs
         current_pass[:max] = look_to_hash(max_time)
         current_pass[:los] = look_to_hash(los_time)
         current_pass[:sat_id] = sat.tle.norad_num
+        current_pass[:sat_name] = sat.tle.tle_string.split("\n").first
         current_pass[:id] = "#{aos_time.to_i}-#{sat.tle.norad_num}"
 
         if current_pass[:max][:el] >= min_el
-          passes << current_pass 
+          passes << current_pass
         end
 
         current_pass = nil
