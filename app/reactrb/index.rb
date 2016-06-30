@@ -9,9 +9,9 @@ require 'reactrb'
 require 'helpers'
 
 Document.ready? do
-  React.render(                                            
+  React.render(
     React.create_element(
-      UpdatingSatelliteTable, 
+      UpdatingSatelliteTable,
         :poll_interval => 0.5,
         :coords => [41.843478, -69.979048],
         :sat_ids => ['07530', '40074', '24278', '40903', '40906', '40910', '27607', '40654', '40967', '25544']
@@ -19,9 +19,9 @@ Document.ready? do
     Element['#sat-table']
   )
 
-  React.render(                                            
+  React.render(
     React.create_element(
-      UpdatingPassesTable, 
+      UpdatingPassesTable,
         :coords => [41.843478, -69.979048],
         :sat_ids => ['07530', '40074', '24278', '40903', '40906', '40910', '27607', '40654', '40967', '25544']
     ),
@@ -105,7 +105,7 @@ class PassesTable < React::Component::Base
           th(:class => 'border-left border-right center', :col_span => 3) { 'Max' }
           th(:class => 'border-left border-right center', :col_span => 3) { 'LOS' }
         end
-        
+
       end
 
       tbody do
@@ -114,16 +114,16 @@ class PassesTable < React::Component::Base
         end
 
         params.passes.each do |pass|
-          if pass['aos']['time'] <= state.now.to_i && pass['los']['time'] >= state.now.to_i 
+          if pass['aos']['time'] <= state.now.to_i && pass['los']['time'] >= state.now.to_i
             tr_class = 'success'
-          elsif pass['los']['time'] < state.now.to_i  
+          elsif pass['los']['time'] < state.now.to_i
             tr_class = 'text-muted'
           else
             tr_class = nil
           end
 
           tr(:class => tr_class) do
-            td { pass['sat_id'] }
+            td { pass['sat_name'] }
             td(:class => 'interval') { interval_format(pass['los']['time'] - pass['aos']['time']) }
             td(:class => 'num') { "#{pass['max']['el'].to_s}°" }
 
@@ -164,12 +164,12 @@ class UpdatingSatelliteTable < React::Component::Base
       end
     end
   end
-    
+
   after_mount do
     @fetcher.start
     @fetcher.call # Immediately fetch
   end
-  
+
   before_unmount do
     @fetcher.stop
   end
@@ -232,7 +232,7 @@ class UpdatingPassesTable < React::Component::Base
 
     @updater.start
   end
-  
+
   before_unmount do
     @fetcher.stop
     @updater.stop
