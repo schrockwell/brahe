@@ -6,12 +6,22 @@ This Sinatra app downloads [the latest AMSAT two-line Keplerian Elements](http:/
 
 ## Installation
 
-Using RVM and Ruby 2.3.x:
+Using RVM:
 
 ```
-cd brahe
+# Install Ruby 2.3.0
+rvm install 2.3.0
+
+# Go into the root directory of the repo
+cd brahe # rvm should automatically detect and create "brahe" gemset
+
+# Install Bundler
 gem install bundler --no-ri --no-rdoc
+
+# Install required gems
 bundle
+
+# Start Sinatra
 rackup
 ```
 
