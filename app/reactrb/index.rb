@@ -14,11 +14,12 @@ require_relative 'components/updating_passes_table'
 require_relative 'components/utc_clock'
 
 Document.ready? do
+  qth = BraheHelpers.grid_decode("FN31en")
   React.render(
     React.create_element(
       UpdatingSatelliteTable,
         :poll_interval => 0.5,
-        :coords => [41.843478, -69.979048],
+        :coords => qth,
         :sat_ids => ['07530', '40074', '24278', '40903', '40906', '40910', '27607', '40654', '40967', '25544']
     ),
     Element['#sat-table']
@@ -27,7 +28,7 @@ Document.ready? do
   React.render(
     React.create_element(
       UpdatingPassesTable,
-        :coords => [41.843478, -69.979048],
+        :coords => qth,
         :sat_ids => ['07530', '40074', '24278', '40903', '40906', '40910', '27607', '40654', '40967', '25544']
     ),
     Element['#passes-table']
