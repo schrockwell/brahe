@@ -3,6 +3,7 @@ GEM
   specs:
     concurrent-ruby (1.0.2)
     daemons (1.2.3)
+    dx-grid (1.0.0)
     eventmachine (1.2.0.1)
     hike (1.2.3)
     opal (0.9.4)
@@ -44,6 +45,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  dx-grid
   opal-jquery
   orbit
   reactrb

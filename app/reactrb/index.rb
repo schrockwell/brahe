@@ -6,6 +6,7 @@ require 'json'
 require 'react'
 require 'react-dom'
 require 'reactrb'
+require 'dx/grid'
 
 require_relative 'helpers'
 require_relative 'maps'
@@ -14,7 +15,8 @@ require_relative 'components/updating_passes_table'
 require_relative 'components/utc_clock'
 
 Document.ready? do
-  qth = BraheHelpers.grid_decode("FN31en")
+  qth = DX::Grid.decode("FN31en")
+
   React.render(
     React.create_element(
       UpdatingSatelliteTable,

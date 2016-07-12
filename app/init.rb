@@ -1,6 +1,7 @@
 Bundler.require
 
 Opal::Processor.source_map_enabled = true
+Opal.use_gem 'dx-grid'
 
 require 'open-uri'
 require 'json'
